@@ -13,6 +13,7 @@ from utils.status_code import ERROR_FIELD
 
 class UserView(viewsets.GenericViewSet,
                mixins.ListModelMixin):
+    """用户视图"""
     queryset = User.objects.all()
     serializer_class = UserSerializers
 
@@ -23,11 +24,15 @@ class UserView(viewsets.GenericViewSet,
                 'order_not_send_num': ''}
         return Response(data)
 
+    # @action装饰自定义返回的函数
     @action(methods=['POST'], detail=False, serializer_class=UserRegisterSerializer)
     def register(self, request):
+        """用户注册"""
         serializer = self.get_serializer(data=request.data)
         result = serializer.is_valid(raise_exception=False)
+        # 校验失败，自定义返回的错误信息
         if result:
+            # 校验成功，保存用户
             password = make_password(serializer.data['u_password'])
             user = User.objects.create(username=serializer.data['u_username'],
                                        password=password,
@@ -38,9 +43,11 @@ class UserView(viewsets.GenericViewSet,
 
     @action(methods=['POST'], detail=False, serializer_class=UserLoginSerializer)
     def login(self, request):
+        """用户登录"""
         serializer = self.get_serializer(data=request.data)
         result = serializer.is_valid(raise_exception=False)
         if result:
+            # 生成用户唯一标识符
             token = uuid.uuid4().hex
             user = User.objects.filter(username=serializer.data['u_username']).first()
             cache.set(token, user.id, timeout=30000)

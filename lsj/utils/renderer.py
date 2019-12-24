@@ -20,5 +20,5 @@ class MyJSONRenderer(JSONRenderer):
         # 告诉浏览器是正常的访问
         renderer_context['response'].status_code = 200
         res = {'code': code, 'msg': msg, 'data': result}
-        # 再去调用父类super().render(res)将字典res转为json格式
+        # 调用父类super().render(res)将字典res转为json格式
         return super().render(res)

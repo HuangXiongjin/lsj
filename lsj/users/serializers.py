@@ -9,12 +9,14 @@ from utils.status_code import ERROR_USER_EXISTS, ERROR_PASSWORD_DIFFERENT, ERROR
 
 
 class UserSerializers(serializers.ModelSerializer):
+    """用户序列化"""
     class Meta:
         model = User
         fields = '__all__'
 
 
 class UserRegisterSerializer(serializers.Serializer):
+    """用户注册序列化类"""
     u_username = serializers.CharField(required=True, max_length=15, min_length=8,
                                        error_messages={'required': '用户名不能为空',
                                                        'max_length': '最大长度15',
@@ -49,6 +51,7 @@ class UserRegisterSerializer(serializers.Serializer):
 
 
 class UserLoginSerializer(serializers.Serializer):
+    """用户登录"""
     u_username = serializers.CharField(required=True, max_length=15, min_length=8,
                                        error_messages={'required': '用户名不能为空',
                                                        'max_length': '最大长度15',

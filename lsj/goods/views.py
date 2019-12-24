@@ -6,11 +6,13 @@ from goods.filters import GoodsFilter
 from goods.models import MainNav, MainWheel, MainShow, FoodType, Goods
 from goods.serializers import MainNavSerializer, MainWheelSerializer, MainShowSerializer, FoodTypeSerializer, \
     GoodsSerializer
+from utils.func import manage_cart
 from utils.status_code import SUCCESS
 
 
 @api_view(['GET'])
 def home(request):
+    """主页商品"""
     mainnav = MainNav.objects.all()
     mainwheel = MainWheel.objects.all()
     mainshow = MainShow.objects.all()
@@ -22,8 +24,16 @@ def home(request):
     return Response({'code': SUCCESS[0], 'data': data})
 
 
+@api_view(['POST'])
+def cart(request):
+    """购物车"""
+    manage_cart(request, 1)
+    return Response({'code': SUCCESS[0], 'msg': SUCCESS[2]})
+
+
 class FoodTypeView(viewsets.GenericViewSet,
                    mixins.ListModelMixin):
+    """左边栏商品分类"""
     queryset = FoodType.objects.all()
     serializer_class = FoodTypeSerializer
 
@@ -40,8 +50,10 @@ class FoodTypeView(viewsets.GenericViewSet,
 
 class MarketView(viewsets.GenericViewSet,
                  mixins.ListModelMixin):
+    """商品分类信息"""
     queryset = Goods.objects.all()
     serializer_class = GoodsSerializer
+    # 定义商品分类过滤
     filter_class = GoodsFilter
 
     def list(self, request, *args, **kwargs):
@@ -54,13 +66,17 @@ class MarketView(viewsets.GenericViewSet,
             {'order_name': '销量降序', 'order_value': '3'},
         ]
         type_no = request.query_params.get('typeid')
+        # 获取当前商品的分类信息
         food_type = FoodType.objects.filter(type_no=type_no).first()
         type_name = food_type.child_type_name
+        # 整理分类信息，全部分类:0#进口水果:103534#国产水果:103533
+        # 修改为['全部分类': 0, '进口水果': 103545, '国产水果': 103533]
         results = [item.split(':') for item in type_name.split('#')]
         foodtype_childname_list = []
         for item in results:
             dict1 = {'child_name': item[0], 'child_value': item[1]}
             foodtype_childname_list.append(dict1)
+        # 定义前端接收的数据格式
         data = {
             'goods_list': serializer.data,
             'foodtype_childname_list': foodtype_childname_list,

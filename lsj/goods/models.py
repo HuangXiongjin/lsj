@@ -25,21 +25,6 @@ class MainNav(Main):
         db_table = 'main_nav'
 
 
-class MainShow(models.Model):
-    """首页商品"""
-    # 图片链接
-    img = models.CharField(max_length=512)
-    # 商品名称
-    goods_name = models.CharField(max_length=128, unique=True, null=False)
-    # 商品价格
-    price = models.FloatField(default=0)
-    # 商品计量单位
-    unit = models.CharField(max_length=32, null=True)
-
-    class Meta:
-        db_table = 'main_show'
-
-
 class FoodType(models.Model):
     """商品类型表"""
     # 类型编号
@@ -80,3 +65,19 @@ class Goods(models.Model):
 
     class Meta:
         db_table = 'goods'
+
+
+class MainShow(models.Model):
+    """首页商品"""
+    # 图片链接
+    img = models.CharField(max_length=512)
+    # 商品名称
+    goods_name = models.CharField(max_length=128, unique=True, null=False)
+    # 商品价格
+    price = models.FloatField(default=0)
+    # 商品计量单位
+    unit = models.CharField(max_length=32, null=True)
+    goods = models.ForeignKey(Goods, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'main_show'

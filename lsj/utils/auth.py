@@ -7,6 +7,7 @@ from utils.status_code import ERROR_USER_INVALID
 
 
 class UserAuth(BaseAuthentication):
+    """用户登录认证"""
     def authenticate(self, request):
         allow_path = ['/api/user/auth/register/',
                       '/api/user/auth/login/',
